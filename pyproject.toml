@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "python-spielplatz"
+version = "0.1.0"
+description = ""
+authors = ["Travis Thompson <travis.thompson@quantinuum.com>"]
+readme = "README.md"
+
+[poetry.vi]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^7.2.1"
+pytest-cov = "^4.0.0"
+coverage = "^7.1.0"
+
+[tool.poetry.group.linting.dependencies]
+ruff = "^0.0.243"
+black = "^23.1.0"
+darglint = "^1.8.1"
+
+[tool.poetry.group.type-checking.dependencies]
+mypy = "^1.0.0"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^6.1.3"
+sphinx-autodoc-typehints = "^1.22"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["python-spielplatz"]
+
+[tool.coverage.report]
+fail_under = 10
+show_missing = true
+
+[tool.ruff]
+# Enable Pyflakes `E` and `F` codes by default.
+select = ["F", "E", "W", "C90", "I", "N", "D", "UP", "YTT", "ANN",
+    "S", "BLE", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "EM",
+    "EXE", "ISC", "ICN", "G", "INP", "PIE", "T20", "PT", "Q", "RET",
+    "SIM", "TID", "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL",
+    "TRY", "RSE", "SLF", "RUF"]
+ignore = ["E501", "D211", "D212", "TCH002"]
+# Assume Python 3.11.
+target-version = "py311"
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402", "F403"]
+"tests/*" = ["S101"]
+"docs/conf.py" = ["A001", "INP001"]
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+ignore_missing_imports = true
