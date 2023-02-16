@@ -1,50 +1,84 @@
-import uuid
-from dataclasses import dataclass
+import logging
 import pathlib
 import pickle
+import uuid
+from dataclasses import dataclass
 from tempfile import gettempdir
-from typing import Union
 from uuid import UUID
-from python_spielplatz.checkers.rule_sets import RuleSet
-from python_spielplatz.checkers.game_state import GameState
-from python_spielplatz.checkers.boardstate import BoardState
+
 import click
+
+from python_spielplatz.checkers.boardstate import BoardState
+from python_spielplatz.checkers.game_state import GameState
+from python_spielplatz.checkers.rule_sets import RuleSet
 
 
 @dataclass
-class GameSettings:
+class GlobalSettings:
+    """Global settings."""
+
     current_game_identifier: UUID
 
 
 class GameStateManager:
+    """Manage game states.
+
+    Save and load games states to temporary files and keep track of global game settings
+    """
+
     _cli_cache_dir = "checkers_cache"
     _cli_cache_dir_path = pathlib.Path(gettempdir(), _cli_cache_dir)
     _cli_cache_settings_path = pathlib.Path(_cli_cache_dir_path, "settings.pkl")
 
-    def try_get_current_game_settings(self) -> Union[None, GameSettings]:
+    def try_get_current_game_settings(self) -> None | GlobalSettings:
+        """load settings from disk.
+
+        Returns:
+            Global settings if a settings.pkl file is found, otherwise None
+        """
         if not self._cli_cache_settings_path.exists():
             return None
-        with open(self._cli_cache_settings_path, "rb") as settings_file:
+        with self._cli_cache_settings_path.open("rb") as settings_file:
             return pickle.load(settings_file)
 
-    def try_update_current_game_settings(self, game_settings: GameSettings) -> bool:
+    def try_update_current_game_settings(self, game_settings: GlobalSettings) -> bool:
+        """tries to update global settings using the given object.
+
+        Args:
+            game_settings: A Global settings object to persist on file
+
+        Returns:
+            True if successful, False otherwise
+        """
         try:
             self._cli_cache_dir_path.mkdir(parents=True, exist_ok=True)
-            with open(self._cli_cache_settings_path, "wb") as settings_file:
+            with self._cli_cache_settings_path.open("wb") as settings_file:
                 pickle.dump(game_settings, settings_file)
-            return True
         except OSError:
-            print("failed to update game settings")
             return False
+        return True
 
-    def try_get_current_game_state(self, game_id: UUID) -> Union[None, GameState]:
+    def try_load_game_state(self, game_id: UUID) -> None | GameState:
+        """tries to load game state from file for a given game id.
+
+        Args:
+            game_id: id of the game to load
+
+        Returns:
+            GameState object if successful, None otherwise
+        """
         game_path = pathlib.Path(self._cli_cache_dir_path, f"{game_id}.pkl")
         if not game_path.exists():
             return None
-        with open(game_path, "rb") as game_file:
+        with game_path.open("rb") as game_file:
             return pickle.load(game_file)
 
-    def list_games(self) -> list[str]:
+    def get_game_list(self) -> list[str]:
+        """Constructs a list of running games on file.
+
+        Returns:
+            a list of game ids in str format
+        """
         if not self._cli_cache_dir_path.exists():
             return []
         path_strings = [str(path.stem) for path in self._cli_cache_dir_path.iterdir()]
@@ -53,40 +87,56 @@ class GameStateManager:
         return path_strings
 
     def clear_games(self) -> None:
+        """Deletes all saved game states and global settings."""
         if not self._cli_cache_dir_path.exists():
-            print("Nothing to remove")
             return
-        paths = [path for path in self._cli_cache_dir_path.iterdir()]
+        paths = list(self._cli_cache_dir_path.iterdir())
         if not paths:
-            print("Nothing to remove")
             return
-        print(f"Removing all files in directory {self._cli_cache_dir_path}:")
-        for path in paths:
-            print(path)
-        click.confirm("Confirm deletion of these files", abort=True)
-        for path in paths:
-            path.unlink()
+        logging.warning(
+            " Will remove all files in directory {}",
+            self._cli_cache_dir_path,
+        )
+        if click.confirm("Confirm deletion of these files"):
+            for path in paths:
+                path.unlink()
 
-    def try_save_current_game_state(self, game_id: UUID, game_state: GameState) -> bool:
+    def try_save_game_state(self, game_id: UUID, game_state: GameState) -> bool:
+        """tries to save game state to a file for a given game id.
+
+        Args:
+            game_id: id of the game to save
+            game_state: the state of the game
+
+        Returns:
+            True if successful, False otherwise
+        """
         try:
             self._cli_cache_dir_path.mkdir(parents=True, exist_ok=True)
             game_path = pathlib.Path(self._cli_cache_dir_path, f"{game_id}.pkl")
-            with open(game_path, "wb") as game_file:
+            with game_path.open("wb") as game_file:
                 pickle.dump(game_state, game_file)
-            return True
         except OSError:
-            print("unable to write game state")
             return False
+        return True
 
-    def initialize_new_game(self, rule_set: RuleSet) -> UUID:
+    def initialize_new_game(self, rule_set: RuleSet) -> UUID | None:
+        """Creates a new game and sets it as the default game.
+
+        Args:
+            rule_set: the rule set to use for the new game
+
+        Returns:
+            id of the created game if successful, None otherwise
+        """
         game_state = GameState(
             rule_set=rule_set,
             board_state=BoardState(
-                occupancies=rule_set.initial_game_occupancies()
+                occupancies=rule_set.initial_game_occupancies(),
             ),
             whose_turn=rule_set.first_player(),
         )
         game_id = uuid.uuid4()
-        if not self.try_save_current_game_state(game_id, game_state):
-            raise Exception("Failed to initialize new game")
+        if not self.try_save_game_state(game_id, game_state):
+            return None
         return game_id

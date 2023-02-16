@@ -1,27 +1,32 @@
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
 
 
-class Color(Enum):
+class PieceColor(Enum):
+    """The colors that pieces can have."""
+
     WHITE = 0
     BLACK = 1
 
     def __str__(self) -> str:
-        match self:
-            case Color.WHITE:
-                return "WHITE"
-            case Color.BLACK:
-                return "BLACK"
+        """Convert color Enum to string."""
+        if self == PieceColor.WHITE:
+            return "WHITE"
+        if self == PieceColor.BLACK:
+            return "BLACK"
+        raise ValueError
 
 
 class Rank(Enum):
+    """The ranks that pieces can have."""
+
     SOLDIER = 0
     QUEEN = 1
 
 
 @dataclass
 class Piece:
-    color: Color
+    """A class that defines a single piece."""
+
+    color: PieceColor
     rank: Rank
-
-
