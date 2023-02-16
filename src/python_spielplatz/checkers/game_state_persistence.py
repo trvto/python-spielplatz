@@ -94,7 +94,7 @@ class GameStateManager:
         if not paths:
             return
         logging.warning(
-            " Will remove all files in directory {}",
+            " Will remove all files in directory %s",
             self._cli_cache_dir_path,
         )
         if click.confirm("Confirm deletion of these files"):
