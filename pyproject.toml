@@ -9,6 +9,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
+attrs = "^22.2.0"
+click = "^8.1.3"
 
 
 [tool.poetry.group.tests.dependencies]
@@ -27,6 +29,9 @@ mypy = "^1.0.0"
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.1.3"
 sphinx-autodoc-typehints = "^1.22"
+
+[tool.poetry.scripts]
+checkers = "python_spielplatz.checkers.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
