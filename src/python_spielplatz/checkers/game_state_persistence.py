@@ -1,4 +1,3 @@
-import logging
 import pathlib
 import pickle
 import uuid
@@ -93,11 +92,9 @@ class GameStateManager:
         paths = list(self._cli_cache_dir_path.iterdir())
         if not paths:
             return
-        logging.warning(
-            " Will remove all files in directory %s",
-            self._cli_cache_dir_path,
-        )
-        if click.confirm("Confirm deletion of these files"):
+        if click.confirm(
+            f"Confirm deletion of these files within {self._cli_cache_dir_path}",
+        ):
             for path in paths:
                 path.unlink()
 

@@ -1,4 +1,5 @@
 """A class for storing board data."""
+import re
 from enum import Enum
 
 from attrs import define
@@ -19,6 +20,25 @@ class Position:
         Just uses the hash for the python tuple (row, column)
         """
         return (self.row, self.column).__hash__()
+
+
+def position_from_position_str(position_string: str) -> Position | None:
+    """Create a Position object from a position string.
+
+    Function accepts strings that are any two integers separated by a comma
+
+    Args:
+        position_string: a string in the format "<row_integer>,<column_integer>"
+
+    Returns:
+        a Position object with row and column set from the position string or None
+        if conversion failed
+    """
+    # check that string is exactly two integers, separated by a comma
+    if not re.fullmatch(r"[0-9]+,[0-9]+", position_string):
+        return None
+    position_int_array = [int(int_string) for int_string in position_string.split(",")]
+    return Position(row=position_int_array[0], column=position_int_array[1])
 
 
 class PieceType(Enum):

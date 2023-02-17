@@ -3,6 +3,7 @@ import uuid
 
 import click
 
+from python_spielplatz.checkers.boardstate import position_from_position_str
 from python_spielplatz.checkers.game_state_persistence import (
     GameStateManager,
     GlobalSettings,
@@ -69,16 +70,26 @@ def show(game_id: uuid.UUID) -> None:
 
 
 @click.command(
-    help="Move piece at PIECE_POSITION along PATH. PATH is a space separated list of Positions",
+    help="Move piece at PIECE_POSITION along MOVE_PATH. MOVE_PATH is a space separated list of Positions",
 )
 @click.argument("piece_position", nargs=1, type=str)
-@click.argument("path", nargs=-1, required=True, type=str)
-def move(piece_position: str, path: str) -> None:
+@click.argument("move_path", nargs=-1, required=True, type=str)
+def move(piece_position: str, move_path: str) -> None:
     """Make a move."""
+    start = position_from_position_str(piece_position)
+    if start is None:
+        print("Position 1 is il-formatted, try again")
+        return
+    target_sequence = [position_from_position_str(pos) for pos in move_path]
+    for i, pos in enumerate(target_sequence):
+        if pos is None:
+            print(f"Position {i+2} is il-formatted, try again")
+            return
+
     print(f" {piece_position} ", end="->")
-    for position in path[:-1]:
+    for position in move_path[:-1]:
         print(f" {position} ", end="->")
-    print(f" {path[-1]}")
+    print(f" {move_path[-1]}")
 
 
 main.add_command(new)
