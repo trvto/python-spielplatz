@@ -1,6 +1,6 @@
-# Reference
+# Checkers reference
 
-## checkers
+## rule sets
 
 ```{eval-rst}
 .. automodule:: python_spielplatz.checkers.rule_sets

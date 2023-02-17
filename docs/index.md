@@ -13,5 +13,5 @@ maxdepth: 1
 ---
 
 checkers-game-cli
-reference
+checkers-game-reference
 ```
