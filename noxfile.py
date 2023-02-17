@@ -20,7 +20,7 @@ def tests(session: nox.sessions.Session) -> None:
 @nox.session(python=["3.11"])
 def lint(session: nox.sessions.Session) -> None:
     """Lint using ruff, black, and darglint."""
-    args = locations
+    args = session.posargs or locations
     session.run("poetry", "install", "--only=linting", external=True)
     session.run("ruff", "--fix", *args)
     session.run("black", *args)

@@ -117,7 +117,10 @@ class GameStateManager:
             return False
         return True
 
-    def initialize_new_game(self, rule_set: RuleSet) -> UUID | None:
+    def initialize_new_game(
+        self,
+        rule_set: RuleSet,
+    ) -> tuple[UUID | None, GameState | None]:
         """Creates a new game and sets it as the default game.
 
         Args:
@@ -135,5 +138,5 @@ class GameStateManager:
         )
         game_id = uuid.uuid4()
         if not self.try_save_game_state(game_id, game_state):
-            return None
-        return game_id
+            return None, None
+        return game_id, game_state

@@ -23,14 +23,18 @@ def main() -> None:
 def new() -> None:
     """Initialize a new game."""
     game_state_manager = GameStateManager()
-    game_id = game_state_manager.initialize_new_game(StandardRuleSet())
+    game_id, initial_game_state = game_state_manager.initialize_new_game(
+        StandardRuleSet(),
+    )
+    if game_id is None or initial_game_state is None:
+        print("Initializing game was unsuccessful")
+        return
     game_state_manager.try_update_current_game_settings(
         GlobalSettings(current_game_identifier=game_id),
     )
-    current_game_state = game_state_manager.try_load_game_state(game_id)
     print(f" Game: {game_id}")
-    print(f" It's now {current_game_state.whose_turn}'s turn\n")
-    print(current_game_state.board_state)
+    print(f" It's now {initial_game_state.whose_turn}'s turn\n")
+    print(initial_game_state.board_state)
 
 
 @click.command(name="list")
@@ -53,17 +57,19 @@ def clear() -> None:
 
 @click.command()
 @click.option("-g", "--game-id", type=uuid.UUID)
-def show(game_id: uuid.UUID) -> None:
+def show(game_id: uuid.UUID | None) -> None:
     """Show state of game."""
     game_state_manager = GameStateManager()
     if not game_id:
         game_settings = game_state_manager.try_get_current_game_settings()
         if not game_settings:
             print("No game id provided and no default game id found")
+            return
         game_id = game_settings.current_game_identifier
     current_game_state = game_state_manager.try_load_game_state(game_id)
     if not current_game_state:
         print(f"Could not load state for game {game_id}, does this game exist?")
+        return
     print(f" Game: {game_id}")
     print(f" It's now {current_game_state.whose_turn}'s turn\n")
     print(current_game_state.board_state)

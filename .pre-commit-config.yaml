@@ -1,15 +1,15 @@
 repos:
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff linter
-        entry: poetry run ruff --fix
+      - id: nox-linting
+        name: ruff, black, darglint
+        entry: nox -rs lint --
         language: system
         types: [python]
         files: "^src/.+|^tests/.+|noxfile.py"
-      - id: black
-        name: black
-        entry: poetry run black
+      - id: nox-typechecking
+        name: mypy
+        entry: nox -rs type_checking --
         language: system
         types: [python]
         files: "^src/.+|^tests/.+|noxfile.py"
