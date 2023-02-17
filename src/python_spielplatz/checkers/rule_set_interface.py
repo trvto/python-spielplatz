@@ -1,6 +1,11 @@
 from abc import ABC, abstractmethod
 
-from python_spielplatz.checkers.boardstate import BoardState, PieceType, Position
+from python_spielplatz.checkers.boardstate import (
+    BoardState,
+    BoardStateUpdates,
+    PieceType,
+    Position,
+)
 from python_spielplatz.checkers.movement import Move
 from python_spielplatz.checkers.pieces import PieceColor
 
@@ -17,7 +22,7 @@ class RuleSet(ABC):
         move: Move,
         board_state: BoardState,
         current_player: PieceColor,
-    ) -> bool:
+    ) -> BoardStateUpdates | None:
         """is this move allowed given board state.
 
         Args:
@@ -26,7 +31,7 @@ class RuleSet(ABC):
             current_player: color of player whose turn it is
 
         Returns:
-            True if move is legal, False if move is illegal.
+            Board state updates if move is legal, None if move is illegal.
         """
 
     @staticmethod

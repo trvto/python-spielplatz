@@ -1,4 +1,9 @@
-from python_spielplatz.checkers.boardstate import BoardState, PieceType, Position
+from python_spielplatz.checkers.boardstate import (
+    BoardState,
+    BoardStateUpdates,
+    PieceType,
+    Position,
+)
 from python_spielplatz.checkers.movement import Move
 from python_spielplatz.checkers.pieces import PieceColor
 from python_spielplatz.checkers.rule_set_interface import RuleSet
@@ -23,7 +28,7 @@ class StandardRuleSet(RuleSet):
         move: Move,
         board_state: BoardState,
         current_player: PieceColor,
-    ) -> bool:
+    ) -> BoardStateUpdates | None:
         """is this move allowed given board state.
 
         Args:
@@ -32,16 +37,16 @@ class StandardRuleSet(RuleSet):
             current_player: color of player whose turn it is
 
         Returns:
-            True if move is legal, False if move is illegal.
+            Board state updates if move is legal, None if move is illegal.
         """
         if move.target_position == move.starting_position:
-            return False
+            return None
         occupant = board_state.occupancies.get(move.starting_position)
         if occupant is None:
-            return False
+            return None
         if occupant.value.color != current_player:
-            return False
-        return True
+            return None
+        return BoardStateUpdates({})
 
     @staticmethod
     def initial_game_occupancies() -> dict[Position, PieceType]:

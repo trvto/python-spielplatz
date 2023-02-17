@@ -94,3 +94,14 @@ class BoardState:
         state_str += "   7"
         state_str += "\n"
         return state_str
+
+
+@define
+class BoardStateUpdates:
+    """A list of updates to the state of the board.
+
+    Params:
+    occupancy_updates: positions to update, and the piece (or no piece) that is now there
+    """
+
+    occupancy_updates: dict[Position, PieceType | None]
