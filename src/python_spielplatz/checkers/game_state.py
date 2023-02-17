@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from python_spielplatz.checkers.boardstate import BoardState
 from python_spielplatz.checkers.pieces import PieceColor
-from python_spielplatz.checkers.rule_sets import RuleSet
+from python_spielplatz.checkers.standard_rule_set import RuleSet
 
 
 @dataclass

@@ -8,7 +8,7 @@ from python_spielplatz.checkers.game_state_persistence import (
     GameStateManager,
     GlobalSettings,
 )
-from python_spielplatz.checkers.rule_sets import StandardRuleSet
+from python_spielplatz.checkers.standard_rule_set import StandardRuleSet
 
 from . import __version__
 

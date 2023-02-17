@@ -9,7 +9,7 @@ import click
 
 from python_spielplatz.checkers.boardstate import BoardState
 from python_spielplatz.checkers.game_state import GameState
-from python_spielplatz.checkers.rule_sets import RuleSet
+from python_spielplatz.checkers.standard_rule_set import RuleSet
 
 
 @dataclass
