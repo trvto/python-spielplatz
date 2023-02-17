@@ -39,6 +39,7 @@ def type_checking(session: nox.sessions.Session) -> None:
 def docs(session: nox.sessions.Session) -> None:
     """Build the documentation."""
     session.run("poetry", "install", "--only=main,docs", external=True)
+
     session.run("sphinx-build", "docs", "docs/_build")
 
 

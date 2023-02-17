@@ -16,7 +16,7 @@ from . import __version__
 @click.group()
 @click.version_option(version=__version__)
 def main() -> None:
-    """This a checkers game command line interface."""
+    """This a checkers game with a command line interface."""
 
 
 @click.command(name="new-game")
@@ -39,7 +39,7 @@ def new() -> None:
 
 @click.command(name="list")
 def list_games() -> None:
-    """Initialize a new game."""
+    """List all saved games."""
     game_state_manager = GameStateManager()
     games = game_state_manager.get_game_list()
     if not games:
@@ -50,7 +50,7 @@ def list_games() -> None:
 
 @click.command()
 def clear() -> None:
-    """Initialize a new game."""
+    """Clear all saved games."""
     game_state_manager = GameStateManager()
     game_state_manager.clear_games()
 
@@ -58,7 +58,7 @@ def clear() -> None:
 @click.command()
 @click.option("-g", "--game-id", type=uuid.UUID)
 def show(game_id: uuid.UUID | None) -> None:
-    """Show state of game."""
+    """Show state of game. If no game id is provided, show game saved as current."""
     game_state_manager = GameStateManager()
     if not game_id:
         game_settings = game_state_manager.try_get_current_game_settings()
@@ -75,13 +75,17 @@ def show(game_id: uuid.UUID | None) -> None:
     print(current_game_state.board_state)
 
 
-@click.command(
-    help="Move piece at PIECE_POSITION along MOVE_PATH. MOVE_PATH is a space separated list of Positions",
-)
+@click.command()
 @click.argument("piece_position", nargs=1, type=str)
 @click.argument("move_path", nargs=-1, required=True, type=str)
 def move(piece_position: str, move_path: str) -> None:
-    """Make a move."""
+    """Move piece at PIECE_POSITION along MOVE_PATH.
+
+    PIECE_POSITION is the starting position given in the format "<row>,<column>",
+    where <row> and <column> are integers.
+
+    MOVE_PATH is a space separated list of positions that the piece should move through
+    """
     start = position_from_position_str(piece_position)
     if start is None:
         print("Position 1 is il-formatted, try again")
