@@ -22,6 +22,10 @@ class Position:
         """
         return (self.row, self.column).__hash__()
 
+    def __str__(self) -> str:
+        """Convert to str."""
+        return f"{self.row},{self.column}"
+
 
 def position_from_position_str(position_string: str) -> Position | CheckersError:
     """Create a Position object from a position string.
