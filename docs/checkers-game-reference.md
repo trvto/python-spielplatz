@@ -21,6 +21,13 @@
    :members:
 ```
 
+## game state persistence
+
+```{eval-rst}
+.. automodule:: python_spielplatz.checkers.game_state_persistence
+   :members:
+```
+
 ## piece movement
 
 ```{eval-rst}
