@@ -15,7 +15,7 @@ repos:
         files: "^src/.+|^tests/.+|noxfile.py"
       - id: darglint
         name: darglint
-        entry: poetry run darglint
+        entry: poetry run darglint -v 2
         language: system
         types: [python]
         files: "^src/.+|^tests/.+|noxfile.py"

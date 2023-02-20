@@ -24,7 +24,7 @@ def lint(session: nox.sessions.Session) -> None:
     session.run("poetry", "install", "--only=linting", external=True)
     session.run("ruff", "--fix", *args)
     session.run("black", *args)
-    session.run("darglint", *args)
+    session.run("darglint", "-v", "2", *args)
 
 
 @nox.session(python=["3.11"])

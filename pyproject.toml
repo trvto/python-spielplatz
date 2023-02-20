@@ -58,7 +58,7 @@ select = ["F", "E", "W", "C90", "I", "N", "D", "UP", "YTT", "ANN",
     "EXE", "ISC", "ICN", "G", "INP", "PIE", "T20", "PT", "Q", "RET",
     "SIM", "TID", "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL",
     "TRY", "RSE", "SLF", "RUF"]
-ignore = ["E501", "D211", "D212", "TCH001", "TCH002", "ANN101", "D100"]
+ignore = ["E501", "D211", "D212", "TCH001", "TCH002", "ANN101", "ANN102", "D100"]
 unfixable = ["T201"]
 # Assume Python 3.11.
 target-version = "py311"
