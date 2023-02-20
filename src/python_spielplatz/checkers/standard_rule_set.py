@@ -1,12 +1,13 @@
-from python_spielplatz.checkers.board_state import (
+from .board_state import (
     BoardState,
     BoardStateUpdates,
     PieceType,
     Position,
 )
-from python_spielplatz.checkers.movement import Move
-from python_spielplatz.checkers.pieces import PieceColor
-from python_spielplatz.checkers.rule_set_interface import RuleSet
+from .checkerserror import CheckersError
+from .movement import Move
+from .pieces import PieceColor
+from .rule_set_interface import RuleSet
 
 
 class StandardRuleSet(RuleSet):
@@ -24,12 +25,12 @@ class StandardRuleSet(RuleSet):
     """
 
     @staticmethod
-    def is_legal_move(
+    def try_make_move(
         move: Move,
         board_state: BoardState,
         current_player: PieceColor,
-    ) -> BoardStateUpdates | None:
-        """is this move allowed given board state.
+    ) -> BoardStateUpdates | CheckersError:
+        """Try to make move, given current board state.
 
         Args:
             move: The move in question
@@ -37,15 +38,17 @@ class StandardRuleSet(RuleSet):
             current_player: color of player whose turn it is
 
         Returns:
-            Board state updates if move is legal, None if move is illegal.
+            BoardStateUpdates if move is legal, CheckersError if move is illegal.
         """
         if move.target_position == move.starting_position:
-            return None
+            return CheckersError(
+                "Target position must be different than starting position",
+            )
         occupant = board_state.occupancies.get(move.starting_position)
         if occupant is None:
-            return None
+            return CheckersError("There is no piece at starting position")
         if occupant.value.color != current_player:
-            return None
+            return CheckersError("The piece at starting position is the wrong color")
         return BoardStateUpdates({})
 
     @staticmethod

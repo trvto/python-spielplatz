@@ -6,8 +6,10 @@ from python_spielplatz.checkers.board_state import (
     PieceType,
     Position,
 )
-from python_spielplatz.checkers.movement import Move
-from python_spielplatz.checkers.pieces import PieceColor
+
+from .checkerserror import CheckersError
+from .movement import Move
+from .pieces import PieceColor
 
 
 class RuleSet(ABC):
@@ -18,12 +20,12 @@ class RuleSet(ABC):
 
     @staticmethod
     @abstractmethod
-    def is_legal_move(
+    def try_make_move(
         move: Move,
         board_state: BoardState,
         current_player: PieceColor,
-    ) -> BoardStateUpdates | None:
-        """is this move allowed given board state.
+    ) -> BoardStateUpdates | CheckersError:
+        """Try to make move, given current board state.
 
         Args:
             move: The move in question
@@ -31,7 +33,7 @@ class RuleSet(ABC):
             current_player: color of player whose turn it is
 
         Returns:
-            Board state updates if move is legal, None if move is illegal.
+            Board state updates if move is legal, CheckersError if move is illegal.
         """
 
     @staticmethod

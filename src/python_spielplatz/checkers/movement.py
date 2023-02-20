@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
-from python_spielplatz.checkers.board_state import BoardState, Position
+from .board_state import Position
+from .checkerserror import CheckersError
+from .game_state import GameState
 
 
 @dataclass
@@ -11,11 +13,14 @@ class Move:
     target_position: Position
 
 
-def make_move(move: Move, board_state: BoardState) -> BoardState:
-    """Given a move and the current board state, return the resulting board state.
+def try_make_move(move: Move, game_state: GameState) -> GameState | CheckersError:
+    """Given a move and the current game state, return the resulting board state.
 
     This method simply sets the
     """
-    if move.starting_position == move.target_position:
-        return board_state
-    return board_state
+    game_state.rule_set.try_make_move(
+        move,
+        game_state.board_state,
+        game_state.whose_turn,
+    )
+    return game_state
