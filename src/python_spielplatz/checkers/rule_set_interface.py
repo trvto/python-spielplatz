@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from python_spielplatz.checkers.boardstate import (
+from python_spielplatz.checkers.board_state import (
     BoardState,
     BoardStateUpdates,
     PieceType,

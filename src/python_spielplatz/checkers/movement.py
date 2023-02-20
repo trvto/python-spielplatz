@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from python_spielplatz.checkers.boardstate import BoardState, Position
+from python_spielplatz.checkers.board_state import BoardState, Position
 
 
 @dataclass

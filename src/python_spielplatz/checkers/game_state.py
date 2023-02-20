@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from python_spielplatz.checkers.boardstate import BoardState
+from python_spielplatz.checkers.board_state import BoardState
 from python_spielplatz.checkers.pieces import PieceColor
 from python_spielplatz.checkers.standard_rule_set import RuleSet
 
