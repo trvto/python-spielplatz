@@ -40,7 +40,7 @@ def docs(session: nox.sessions.Session) -> None:
     """Build the documentation."""
     session.run("poetry", "install", "--only=main,docs", external=True)
 
-    session.run("sphinx-build", "docs", "docs/_build")
+    session.run("sphinx-build", "-E", "docs", "docs/_build")
 
 
 @nox.session(python="3.11")

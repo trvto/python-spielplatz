@@ -78,8 +78,8 @@ def show(game_id: uuid.UUID | None) -> None:
         print(f"Error loading state for game {game_id}: {CheckersError.error_message}")
         return
     print(f" Game: {game_id}")
-    print(f" It's now {current_game_state.whose_turn}'s turn\n")
     print(current_game_state.board_state)
+    print(f"  -> {current_game_state.whose_turn} to play")
 
 
 @click.command()

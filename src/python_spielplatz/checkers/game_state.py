@@ -7,13 +7,7 @@ from python_spielplatz.checkers.standard_rule_set import RuleSet
 
 @dataclass
 class GameState:
-    """The state of a game.
-
-    Data:
-      board_state: The current state of the game board.
-      rule_set: The rule set being applied to this game.
-      whose_turn: Which color piece is currently allowed to move.
-    """
+    """Holds the state of a game."""
 
     board_state: BoardState
     rule_set: RuleSet
