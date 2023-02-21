@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 
@@ -14,6 +16,14 @@ class PieceColor(Enum):
             return "WHITE"
         if self == PieceColor.BLACK:
             return "BLACK"
+        raise ValueError
+
+    def next_up(self) -> PieceColor:
+        """Return color who is up next."""
+        if self == PieceColor.WHITE:
+            return PieceColor.BLACK
+        if self == PieceColor.BLACK:
+            return PieceColor.WHITE
         raise ValueError
 
 

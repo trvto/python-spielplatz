@@ -49,7 +49,13 @@ class StandardRuleSet(RuleSet):
             return CheckersError("There is no piece at starting position")
         if occupant.value.color != current_player:
             return CheckersError("The piece at starting position is the wrong color")
-        return BoardStateUpdates({})
+
+        return BoardStateUpdates(
+            {
+                move.starting_position: None,
+                move.target_position: occupant,
+            },
+        )
 
     @staticmethod
     def initial_game_occupancies() -> dict[Position, PieceType]:

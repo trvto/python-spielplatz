@@ -1,14 +1,15 @@
 """A class for storing board data."""
-import re
-from enum import Enum
+from __future__ import annotations
 
-from attrs import define
+import re
+from dataclasses import dataclass
+from enum import Enum
 
 from python_spielplatz.checkers.checkerserror import CheckersError
 from python_spielplatz.checkers.pieces import Piece, PieceColor, Rank
 
 
-@define
+@dataclass
 class Position:
     """A position on the board."""
 
@@ -57,7 +58,18 @@ class PieceType(Enum):
     BLACK_QUEEN = Piece(color=PieceColor.BLACK, rank=Rank.QUEEN)
 
 
-@define
+@dataclass
+class BoardStateUpdates:
+    """A list of updates to the state of the board.
+
+    Params:
+    occupancy_updates: positions to update, and the piece (or no piece) that is now there
+    """
+
+    occupancy_updates: dict[Position, PieceType | None]
+
+
+@dataclass
 class BoardState:
     """The state of the checkerboard.
 
@@ -66,6 +78,14 @@ class BoardState:
     """
 
     occupancies: dict[Position, PieceType]
+
+    def update(self, board_state_updates: BoardStateUpdates) -> None:
+        """Update board state from board state updates spec."""
+        for position, update in board_state_updates.occupancy_updates.items():
+            if update is None:
+                self.occupancies.pop(position)
+            else:
+                self.occupancies[position] = update
 
     def __str__(self) -> str:
         """Represent board state as a multi-line string."""
@@ -101,14 +121,3 @@ class BoardState:
         state_str += "   7"
         state_str += "\n"
         return state_str
-
-
-@define
-class BoardStateUpdates:
-    """A list of updates to the state of the board.
-
-    Params:
-    occupancy_updates: positions to update, and the piece (or no piece) that is now there
-    """
-
-    occupancy_updates: dict[Position, PieceType | None]

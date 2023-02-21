@@ -1,18 +1,21 @@
 """Cli for checkers game."""
+import itertools
+import typing
 import uuid
 
 import click
 
-from python_spielplatz.checkers.standard_rule_set import StandardRuleSet
-
 from . import __version__
-from .board_state import position_from_position_str
+from .board_state import Position, position_from_position_str
 from .checkerserror import CheckersError
+from .game_state import try_make_moves
 from .game_state_persistence import (
     Game,
     GameStateManager,
     GlobalSettings,
 )
+from .movement import Move
+from .rule_set_map import get_rule_set
 
 
 @click.group()
@@ -22,10 +25,16 @@ def main() -> None:
 
 
 @click.command(name="new-game")
-def new() -> None:
+@click.option("-r", "--rule-set", "rule_set_str", type=str, default="StandardRuleSet")
+def new(rule_set_str: str) -> None:
     """Initialize a new game."""
+    rule_set = get_rule_set(rule_set_str)
+    if isinstance(rule_set, CheckersError):
+        print(rule_set.error_message)
+        return
+
     result = GameStateManager.initialize_new_game(
-        StandardRuleSet(),
+        rule_set,
     )
     if isinstance(result, CheckersError):
         print(f"Error initializing game: {result.error_message}")
@@ -70,44 +79,67 @@ def show(game_id: uuid.UUID | None) -> None:
     print(f"  -> {current_game.game_state.whose_turn} to play")
 
 
-@click.command()
+@click.command(name="move")
 @click.option("-g", "--game-id", type=uuid.UUID)
-@click.argument("piece_position", nargs=1, type=str)
 @click.argument("move_path", nargs=-1, required=True, type=str)
-def move(game_id: uuid.UUID | None, piece_position: str, move_path: str) -> None:
-    """Move piece at PIECE_POSITION along MOVE_PATH.
-
-    PIECE_POSITION is the starting position given in the format "<row>,<column>",
-    where <row> and <column> are integers.
+def perform_move_sequence(game_id: uuid.UUID | None, move_path: list[str]) -> None:
+    """Move piece along MOVE_PATH.
 
     MOVE_PATH is a space separated list of positions that the piece should move through
+
+    Positions are given in the format "<row>,<column>", where <row> and <column> are integers.
+
+    The first position in MOVE_PATH is the starting position. This position must be occupied by a piece belonging
+    to the current player
     """
-    start = position_from_position_str(piece_position)
-    if isinstance(start, CheckersError):
-        print(f"Error in argument 1, '{piece_position}': {start.error_message}")
+    position_sequence = get_position_sequence_from_input_move_path(move_path)
+    if isinstance(position_sequence, CheckersError):
+        print(position_sequence.error_message)
         return
-    target_sequence = [position_from_position_str(pos) for pos in move_path]
-    for i, pos in enumerate(target_sequence):
-        if isinstance(pos, CheckersError):
-            print(f"Error in argument {i+2}, '{move_path[i]}': {pos.error_message}")
-            return
 
     current_game = try_load_game(game_id)
     if isinstance(current_game, CheckersError):
         print(current_game.error_message)
         return
 
-    print(f" {piece_position} ", end="->")
-    for position in move_path[:-1]:
-        print(f" {position} ", end="->")
-    print(f" {move_path[-1]}")
+    move_list = [
+        Move(starting_position=position_start, target_position=position_end)
+        for position_start, position_end in itertools.pairwise(position_sequence)
+    ]
+
+    new_game_state = try_make_moves(move_list, current_game.game_state)
+    if isinstance(new_game_state, CheckersError):
+        print(new_game_state.error_message)
+        return
+
+    GameStateManager.try_save_game_state(current_game.game_id, new_game_state)
+
+    print(f" Game: {current_game.game_id}")
+    print(new_game_state.board_state)
+    print(f"  -> {new_game_state.whose_turn} to play")
 
 
 main.add_command(new)
 main.add_command(show)
 main.add_command(list_games)
 main.add_command(clear)
-main.add_command(move)
+main.add_command(perform_move_sequence)
+
+
+def get_position_sequence_from_input_move_path(
+    move_path: list[str],
+) -> list[Position] | CheckersError:
+    """Turn a sequence of positions given by strings into list of Positions with error checking."""
+    position_sequence = [position_from_position_str(pos) for pos in move_path]
+    for i, (position_input, position) in enumerate(
+        zip(move_path, position_sequence, strict=True),
+        start=1,
+    ):
+        if isinstance(position, CheckersError):
+            return CheckersError(
+                f"Error in argument {i}, '{position_input}': {position.error_message}",
+            )
+    return typing.cast(list[Position], position_sequence)
 
 
 def try_load_game(game_id: uuid.UUID | None) -> Game | CheckersError:
