@@ -21,9 +21,14 @@ def try_make_moves(
     moves: list[Move],
     game_state: GameState,
 ) -> GameState | CheckersError:
-    """Given a move and the current game state, return the resulting board state.
+    """Given a move and the current game state, return the resulting game state.
 
-    This method simply sets the
+    Args:
+        moves: a list of moves to make
+        game_state: current state of the game
+
+    Returns:
+        If moves sequence is valid, the resulting game state, otherwise an Error
     """
     board_state = deepcopy(game_state.board_state)
     for i, move in enumerate(moves, start=1):

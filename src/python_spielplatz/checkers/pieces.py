@@ -14,17 +14,13 @@ class PieceColor(Enum):
         """Convert color Enum to string."""
         if self == PieceColor.WHITE:
             return "WHITE"
-        if self == PieceColor.BLACK:
-            return "BLACK"
-        raise ValueError
+        return "BLACK"
 
     def next_up(self) -> PieceColor:
         """Return color who is up next."""
         if self == PieceColor.WHITE:
             return PieceColor.BLACK
-        if self == PieceColor.BLACK:
-            return PieceColor.WHITE
-        raise ValueError
+        return PieceColor.WHITE
 
 
 class Rank(Enum):

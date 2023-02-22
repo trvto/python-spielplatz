@@ -44,7 +44,7 @@ source = ["src", "*/site-packages"]
 
 [tool.coverage.run]
 branch = true
-source = ["python-spielplatz"]
+source = ["python_spielplatz"]
 
 [tool.coverage.report]
 fail_under = 10
