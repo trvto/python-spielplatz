@@ -16,7 +16,7 @@ files = [
 name = "attrs"
 version = "22.2.0"
 description = "Classes Without Boilerplate"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -1076,4 +1076,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c400241a3e275e21270819b7547268dad23cc1e504efd7f42cebfd24be58050e"
+content-hash = "75e7de471c4cc68e9f2b0d566010e6ee511a8953afa181474ec3360f1204f8de"
