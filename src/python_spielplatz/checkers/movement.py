@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from .board_state import Position
 
 
-@dataclass
+@dataclass(frozen=True)
 class Move:
     """Defines a move."""
 

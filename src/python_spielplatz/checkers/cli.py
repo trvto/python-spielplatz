@@ -1,6 +1,5 @@
 """Cli for checkers game."""
 import itertools
-import typing
 import uuid
 
 import click
@@ -97,15 +96,15 @@ def perform_move_sequence(game_id: uuid.UUID | None, move_path: list[str]) -> No
         print(position_sequence.error_message)
         return
 
-    current_game = _try_load_game(game_id)
-    if isinstance(current_game, CheckersError):
-        print(current_game.error_message)
-        return
-
     move_list = [
         Move(starting_position=position_start, target_position=position_end)
         for position_start, position_end in itertools.pairwise(position_sequence)
     ]
+
+    current_game = _try_load_game(game_id)
+    if isinstance(current_game, CheckersError):
+        print(current_game.error_message)
+        return
 
     new_game_state = try_make_moves(move_list, current_game.game_state)
     if isinstance(new_game_state, CheckersError):
@@ -129,16 +128,15 @@ main.add_command(perform_move_sequence)
 def _get_position_sequence_from_input_move_path(
     move_path: list[str],
 ) -> list[Position] | CheckersError:
-    position_sequence = [position_from_position_str(pos) for pos in move_path]
-    for i, (position_input, position) in enumerate(
-        zip(move_path, position_sequence, strict=True),
-        start=1,
-    ):
+    position_sequence = []
+    for i, position_str in enumerate(move_path, start=1):
+        position = position_from_position_str(position_str)
         if isinstance(position, CheckersError):
             return CheckersError(
-                f"Error in argument {i}, '{position_input}': {position.error_message}",
+                f"Error in argument {i}, '{position_str}': {position.error_message}",
             )
-    return typing.cast(list[Position], position_sequence)
+        position_sequence.append(position)
+    return position_sequence
 
 
 def _try_load_game(game_id: uuid.UUID | None) -> Game | CheckersError:
