@@ -111,13 +111,7 @@ class BoardState:
             state_str += "\n"
             state_str += "   " + "*" * (8 * 4 + 1)
         state_str += "\n  "
-        state_str += "   0"
-        state_str += "   1"
-        state_str += "   2"
-        state_str += "   3"
-        state_str += "   4"
-        state_str += "   5"
-        state_str += "   6"
-        state_str += "   7"
+        for i in range(8):
+            state_str += f"   {i}"
         state_str += "\n"
         return state_str

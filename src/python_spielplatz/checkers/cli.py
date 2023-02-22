@@ -70,7 +70,7 @@ def clear() -> None:
 @click.option("-g", "--game-id", type=uuid.UUID)
 def show(game_id: uuid.UUID | None) -> None:
     """Show state of game. If no game id is provided, show game saved as current."""
-    current_game = try_load_game(game_id)
+    current_game = _try_load_game(game_id)
     if isinstance(current_game, CheckersError):
         print(current_game.error_message)
         return
@@ -92,12 +92,12 @@ def perform_move_sequence(game_id: uuid.UUID | None, move_path: list[str]) -> No
     The first position in MOVE_PATH is the starting position. This position must be occupied by a piece belonging
     to the current player
     """
-    position_sequence = get_position_sequence_from_input_move_path(move_path)
+    position_sequence = _get_position_sequence_from_input_move_path(move_path)
     if isinstance(position_sequence, CheckersError):
         print(position_sequence.error_message)
         return
 
-    current_game = try_load_game(game_id)
+    current_game = _try_load_game(game_id)
     if isinstance(current_game, CheckersError):
         print(current_game.error_message)
         return
@@ -126,10 +126,9 @@ main.add_command(clear)
 main.add_command(perform_move_sequence)
 
 
-def get_position_sequence_from_input_move_path(
+def _get_position_sequence_from_input_move_path(
     move_path: list[str],
 ) -> list[Position] | CheckersError:
-    """Turn a sequence of positions given by strings into list of Positions with error checking."""
     position_sequence = [position_from_position_str(pos) for pos in move_path]
     for i, (position_input, position) in enumerate(
         zip(move_path, position_sequence, strict=True),
@@ -142,7 +141,7 @@ def get_position_sequence_from_input_move_path(
     return typing.cast(list[Position], position_sequence)
 
 
-def try_load_game(game_id: uuid.UUID | None) -> Game | CheckersError:
+def _try_load_game(game_id: uuid.UUID | None) -> Game | CheckersError:
     """Retrieve game state.
 
     Args:
