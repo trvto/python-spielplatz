@@ -24,6 +24,7 @@ def test_piece_color_next(
         (PieceColor.BLACK, "BLACK"),
     ],
 )
+# comment
 def test_piece_color_str_conversion(piece_color: PieceColor, expected_str: str) -> None:
     """Test that piece colors can be converted to strings."""
     assert f"{piece_color}" == expected_str
