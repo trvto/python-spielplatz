@@ -30,7 +30,7 @@ class Rank(Enum):
     QUEEN = 1
 
 
-@dataclass
+@dataclass(frozen=True)
 class Piece:
     """A class that defines a single piece."""
 

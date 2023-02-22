@@ -9,19 +9,12 @@ from python_spielplatz.checkers.checkerserror import CheckersError
 from python_spielplatz.checkers.pieces import Piece, PieceColor, Rank
 
 
-@dataclass
+@dataclass(frozen=True)
 class Position:
     """A position on the board."""
 
     row: int
     column: int
-
-    def __hash__(self) -> int:
-        """Hash for a position.
-
-        Just uses the hash for the python tuple (row, column)
-        """
-        return (self.row, self.column).__hash__()
 
     def __str__(self) -> str:
         """Convert to str."""

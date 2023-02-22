@@ -8,7 +8,7 @@ from .pieces import PieceColor
 from .standard_rule_set import RuleSet
 
 
-@dataclass
+@dataclass(frozen=True)
 class GameState:
     """Holds the state of a game."""
 
@@ -43,7 +43,8 @@ def try_make_moves(
             )
         board_state.update(board_state_updates)
 
-    game_state.board_state = board_state
-    game_state.whose_turn = game_state.whose_turn.next_up()
-
-    return game_state
+    return GameState(
+        rule_set=game_state.rule_set,
+        board_state=board_state,
+        whose_turn=game_state.whose_turn.next_up(),
+    )
