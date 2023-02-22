@@ -39,7 +39,7 @@ def new(rule_set_str: str) -> None:
         print(f"Error initializing game: {result.error_message}")
         return
 
-    update_result = GameStateManager.try_update_current_game_settings(
+    update_result = GameStateManager.update_global_checkers_settings(
         GlobalSettings(current_game_identifier=result.game_id),
     )
     if isinstance(update_result, CheckersError):
@@ -52,7 +52,7 @@ def new(rule_set_str: str) -> None:
 @click.command(name="list")
 def list_games() -> None:
     """List all saved games."""
-    games = GameStateManager.get_game_list()
+    games = GameStateManager.get_saved_game_list()
     if not games:
         print("Currently no saved games")
     for game in games:
@@ -62,7 +62,7 @@ def list_games() -> None:
 @click.command()
 def clear() -> None:
     """Clear all saved games."""
-    GameStateManager.clear_games()
+    GameStateManager.clear_saved_games()
 
 
 @click.command()
@@ -111,7 +111,7 @@ def perform_move_sequence(game_id: uuid.UUID | None, move_path: list[str]) -> No
         print(new_game_state.error_message)
         return
 
-    GameStateManager.try_save_game_state(current_game.game_id, new_game_state)
+    GameStateManager.save_game_state(current_game.game_id, new_game_state)
 
     print(f" Game: {current_game.game_id}")
     print(new_game_state.board_state)
@@ -149,5 +149,5 @@ def _try_load_game(game_id: uuid.UUID | None) -> Game | CheckersError:
         game state for given uuid or default game state if None, Checkers Error on load error
     """
     if game_id is None:
-        return GameStateManager.try_load_default_game()
-    return GameStateManager.try_load_game_from_id(game_id)
+        return GameStateManager.load_default_game()
+    return GameStateManager.load_game_from_id(game_id)

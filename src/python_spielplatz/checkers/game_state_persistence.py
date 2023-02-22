@@ -40,7 +40,7 @@ class GameStateManager:
     _cli_cache_settings_path = pathlib.Path(_cli_cache_dir_path, "settings.pkl")
 
     @classmethod
-    def try_get_current_game_settings(cls) -> GlobalSettings | CheckersError:
+    def get_global_checkers_settings(cls) -> GlobalSettings | CheckersError:
         """load settings from disk.
 
         Returns:
@@ -54,7 +54,7 @@ class GameStateManager:
             return pickle.load(settings_file)
 
     @classmethod
-    def try_update_current_game_settings(
+    def update_global_checkers_settings(
         cls,
         game_settings: GlobalSettings,
     ) -> None | CheckersError:
@@ -77,13 +77,13 @@ class GameStateManager:
         return None
 
     @classmethod
-    def try_load_default_game(cls) -> Game | CheckersError:
+    def load_default_game(cls) -> Game | CheckersError:
         """tries to load default game state from file.
 
         Returns:
             GameState object of current default game if successful, Error otherwise
         """
-        game_settings = cls.try_get_current_game_settings()
+        game_settings = cls.get_global_checkers_settings()
         if isinstance(game_settings, CheckersError):
             return CheckersError(
                 f"Could not retrieve default game from settings: {game_settings.error_message}",
@@ -96,7 +96,7 @@ class GameStateManager:
             return Game(game_id=game_id, game_state=pickle.load(game_file))
 
     @classmethod
-    def try_load_game_from_id(cls, game_id: UUID) -> Game | CheckersError:
+    def load_game_from_id(cls, game_id: UUID) -> Game | CheckersError:
         """tries to load game state from file for a given game id.
 
         Args:
@@ -114,7 +114,7 @@ class GameStateManager:
             return Game(game_id=game_id, game_state=pickle.load(game_file))
 
     @classmethod
-    def get_game_list(cls) -> list[str]:
+    def get_saved_game_list(cls) -> list[str]:
         """Constructs a list of running games on file.
 
         Returns:
@@ -132,7 +132,7 @@ class GameStateManager:
         return path_strings
 
     @classmethod
-    def clear_games(cls) -> None:
+    def clear_saved_games(cls) -> None:
         """Deletes all saved game states and global settings."""
         if not cls._cli_cache_dir_path.exists():
             return
@@ -147,7 +147,7 @@ class GameStateManager:
         return
 
     @classmethod
-    def try_save_game_state(
+    def save_game_state(
         cls,
         game_id: UUID,
         game_state: GameState,
@@ -193,7 +193,7 @@ class GameStateManager:
             whose_turn=rule_set.first_player(),
         )
         game_id = uuid.uuid4()
-        save_result = cls.try_save_game_state(game_id, game_state)
+        save_result = cls.save_game_state(game_id, game_state)
         if isinstance(save_result, CheckersError):
             return save_result
         return Game(game_id=game_id, game_state=game_state)
