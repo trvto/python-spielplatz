@@ -94,3 +94,5 @@ To run within the development environment: after `poetry install`, use `poetry r
 checkers commands.
 
 <!-- github-only -->
+
+Show this in github, but not in the documentations
