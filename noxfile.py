@@ -10,7 +10,7 @@ nox.options.sessions = "lint", "type_checking", "safety", "tests"
 """Nox sessions."""
 
 
-@nox.session(python=["3.11"])
+@nox.session(python=["3.11", "3.10", "3.9"])
 def tests(session: nox.sessions.Session) -> None:
     """Run the test suite."""
     session.run("poetry", "install", "--only=main,tests", external=True)
