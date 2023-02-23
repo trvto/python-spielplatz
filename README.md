@@ -77,7 +77,7 @@ and formats are upheld for the code. The checks that run are defined in the [.pr
 
 To enable pre-commit hooks, run (from the repository root):
 
-```commandline
+```
 pre-commit install
 ```
 
